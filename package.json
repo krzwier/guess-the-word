@@ -1,7 +1,7 @@
 {
     "name": "guess-the-word",
     "description": "",
-    "main": "js/main/script.js",
+    "main": "js/script.js",
     "keywords": [],
     "author": "",
     "license": "ISC",
@@ -10,5 +10,9 @@
     },
     "dependencies": {
         "mocha": "^8.3.2"
+    },
+    "devDependencies": {
+        "global-jsdom": "^8.1.0",
+        "jsdom": "^16.5.3"
     }
 }

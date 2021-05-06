@@ -44,7 +44,7 @@ test(`updateDisplayWord should display hidden version of loaded word`, () => {
     console.log(document);
     const display = document.querySelector('.word-in-progress');
     
-    const actual = display.innerText;
+    const actual = display.textContent;
     const expected = "●●●●●●●●";
     expect(actual).toBe(expected);
 });

@@ -38,7 +38,7 @@ const transformWord = function (origWord) {
 
 
 const updateDisplayWord = function (origWord) {
-    displayWord.innerText = transformWord(origWord);
+    displayWord.textContent = transformWord(origWord);
 };
 
 const validateInput = function (input) {
