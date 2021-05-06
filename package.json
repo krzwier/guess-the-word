@@ -1,0 +1,14 @@
+{
+    "name": "guess-the-word",
+    "description": "",
+    "main": "js/main/script.js",
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "scripts": {
+        "test": "mocha"
+    },
+    "dependencies": {
+        "mocha": "^8.3.2"
+    }
+}
