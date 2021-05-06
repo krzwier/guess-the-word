@@ -36,21 +36,34 @@ const transformWord = function (origWord) {
     return circleWord;
 };
 
+
 const updateDisplayWord = function (origWord) {
     displayWord.innerText = transformWord(origWord);
 };
 
+const validateInput = function (input) {
+    if (input === "") {
+        return "Guess was empty!";
+    }
+
+};
+
 updateDisplayWord(word);
 
-guessButton.addEventListener("click", function(e) {
+guessButton.addEventListener("click", function (e) {
     e.preventDefault();
     const guessedLetter = guessInput.value;
     console.log(guessedLetter);
     guessInput.value = "";
 });
 
+
 /* ---- WRAPPER: EXPORT ONLY IF RUNNING TESTS ---- */
 /* istanbul ignore next */
 if (typeof exports !== 'undefined') {
-    module.exports = transformWord;
+    module.exports = { 
+        transformWord: transformWord, 
+        updateDisplayWord: updateDisplayWord,
+        validateInput: validateInput
+    };
 }

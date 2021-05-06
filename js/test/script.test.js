@@ -1,16 +1,20 @@
 const fs = require('fs');
-const { format } = require('path');
-// const { shallow } = require('enzyme');
 const path = require('path');
 const html = fs.readFileSync(path.resolve(__dirname, '../../index.html'), 'utf8');
 
-jest.dontMock('fs');
-// jest.mock('../main/script.js');
+// must load document here, or else import below will fail
+document.documentElement.innerHTML = html.toString();
+const wordLib = require("../main/script");
+
+jest
+    .dontMock('fs');
 
 
 
 beforeEach(() => {
-    document.documentElement.innerHTML = html.toString();
+    
+    document.innerHTML = html.toString();
+    
 
 });
 
@@ -19,27 +23,38 @@ afterEach(() => {
     jest.resetModules();
 });
 
-test('transformWord: input magnolia, output ●●●●●●●●', () => {
-    const transformWord = require("../main/script");
+test('transformWord should return ●●●●●●●● when input string is magnolia', () => {
     const input = "magnolia";
-    const output = transformWord(input);
+    const output = wordLib.transformWord(input);
     const expected = "●●●●●●●●";
     expect(output).toBe(expected);
 });
 
-test('transformWord: input empty string, output empty string', () => {
-    const transformWord = require("../main/script");
+test('transformWord should return empty string when input string is empty', () => {
+    let lib = require("../main/script");
     const input = "";
-    const output = transformWord(input);
+    const output = wordLib.transformWord(input);
     const expected = "";
     expect(output).toBe(expected);
 
 });
 
-test(`updateDisplayWord: updates display with circle version of loaded word`, () => {
-    const display = document.querySelector('.word-in-progress').innerText;
+test(`updateDisplayWord should display hidden version of loaded word`, () => {
+    wordLib.updateDisplayWord("magnolia");
+    console.log(document);
+    const display = document.querySelector('.word-in-progress');
+    
+    const actual = display.innerText;
+    const expected = "●●●●●●●●";
+    expect(actual).toBe(expected);
 });
 
+
+test(`validateInput should output message if input is empty`, () => {
+    const actualMessage = wordLib.validateInput("");
+    expect(actualMessage).toContain("empty");
+
+});
 
 
 /* ---- TESTS FOR USER INTERACTIONS ---- */
