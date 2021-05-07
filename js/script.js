@@ -1,28 +1,29 @@
 /* ---- DOCUMENT ELEMENTS ---- */
 
 // Unordered list where player's guessed letters appears
-const guessList = document.querySelector(".guessed-letters");
+const guessList = global.document.querySelector(".guessed-letters");
 
 // Button with text "Guess!" on it
-const guessButton = document.querySelector(".guess");
+const guessButton = global.document.querySelector(".guess");
 
 // Text input where player guesses letter
-const guessInput = document.querySelector(".letter");
+const guessInput = global.document.querySelector(".letter");
 
 // Paragraph where word in progress appears
-const displayWord = document.querySelector(".word-in-progress");
+const displayWord = global.document.querySelector(".word-in-progress");
+
 
 // Paragraph where remaining guesses displays
-const displayRemaining = document.querySelector(".remaining");
+const displayRemaining = global.document.querySelector(".remaining");
 
 // Span inside paragraph where remaining guesses displays
-const displayRemainingSpan = document.querySelector(".remaining span");
+const displayRemainingSpan = global.document.querySelector(".remaining span");
 
 // Paragraph where messages appear when player guesses a letter
-const displayMessage = document.querySelector(".message");
+const displayMessage = global.document.querySelector(".message");
 
 // Button that prompts player to play again
-const playAgainButton = document.querySelector(".play-again");
+const playAgainButton = global.document.querySelector(".play-again");
 
 
 /* ---- GLOBAL VARIABLES ---- */
