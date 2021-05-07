@@ -41,19 +41,33 @@ test('transformWord should return empty string when input string is empty', () =
 
 test(`updateDisplayWord should display hidden version of loaded word`, () => {
     wordLib.updateDisplayWord("magnolia");
-    console.log(document);
     const display = document.querySelector('.word-in-progress');
-    
     const actual = display.innerText;
     const expected = "●●●●●●●●";
     expect(actual).toBe(expected);
 });
 
 
-test(`validateInput should output message if input is empty`, () => {
+test(`validateInput should output error message if input is empty`, () => {
     const actualMessage = wordLib.validateInput("");
     expect(actualMessage).toContain("empty");
 
+});
+
+test(`validateInput should output error message if user inputs more than one letter`, () => {
+    const actualMessage = wordLib.validateInput("bm");
+    expect(actualMessage).toContain("one letter");
+});
+
+test(`validateInput should output error message if user inputs non-letter`, () => {
+    const actualMessage = wordLib.validateInput("5");
+    expect(actualMessage).toContain("must be a letter");
+});
+
+
+test(`validateInput should output letter if user inputs single letter`, () => {
+    const actualMessage = wordLib.validateInput("f");
+    expect(actualMessage).toBe("f");
 });
 
 

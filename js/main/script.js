@@ -27,6 +27,7 @@ const playAgainButton = document.querySelector(".play-again");
 
 /* ---- GLOBAL VARIABLES ---- */
 var word = "magnolia";
+var guessedLetters = [];
 
 const transformWord = function (origWord) {
     var circleWord = "";
@@ -42,9 +43,22 @@ const updateDisplayWord = function (origWord) {
 };
 
 const validateInput = function (input) {
+    const acceptedLetter = /[a-zA-Z]/;
     if (input === "") {
         return "Guess was empty!";
+    } else if (input.length > 1) {
+        return "Please guess only one letter at a time.";
     }
+    else if (!input.match(acceptedLetter)) {
+        return "Guess must be a letter.";
+    } else {
+        return input;
+    }
+
+};
+
+const makeGuess = function (letter) {
+    const upperCaseLetter = letter.toUpperCase();
 
 };
 
@@ -53,8 +67,11 @@ updateDisplayWord(word);
 guessButton.addEventListener("click", function (e) {
     e.preventDefault();
     const guessedLetter = guessInput.value;
-    console.log(guessedLetter);
     guessInput.value = "";
+    displayMessage.innerText = "";
+    const checkedLetter = validateInput(guessedLetter);
+    console.log(checkedLetter);
+    
 });
 
 
@@ -64,6 +81,7 @@ if (typeof exports !== 'undefined') {
     module.exports = { 
         transformWord: transformWord, 
         updateDisplayWord: updateDisplayWord,
-        validateInput: validateInput
+        validateInput: validateInput,
+        guessedLetters: guessedLetters
     };
 }
