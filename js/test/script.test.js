@@ -48,27 +48,28 @@ test(`updateDisplayWord should display hidden version of loaded word`, () => {
 });
 
 
-test(`validateInput should output error message if input is empty`, () => {
-    const actualMessage = wordLib.validateInput("");
-    expect(actualMessage).toContain("empty");
+test(`validateInput should output -1 if input is empty`, () => {
+    const actual = wordLib.validateInput("");
+    expect(actual).toBe(-1);
 
 });
 
-test(`validateInput should output error message if user inputs more than one letter`, () => {
-    const actualMessage = wordLib.validateInput("bm");
-    expect(actualMessage).toContain("one letter");
+test(`validateInput should output -2 if user inputs more than one letter`, () => {
+    const actual = wordLib.validateInput("bm");
+    expect(actual).toBe(-2);
 });
 
-test(`validateInput should output error message if user inputs non-letter`, () => {
-    const actualMessage = wordLib.validateInput("5");
-    expect(actualMessage).toContain("must be a letter");
+test(`validateInput should output -3 if user inputs non-letter`, () => {
+    const actual = wordLib.validateInput("5");
+    expect(actual).toBe(-3);
 });
 
 
 test(`validateInput should output letter if user inputs single letter`, () => {
-    const actualMessage = wordLib.validateInput("f");
-    expect(actualMessage).toBe("f");
+    const actual = wordLib.validateInput("f");
+    expect(actual).toBe("f");
 });
+
 
 
 /* ---- TESTS FOR USER INTERACTIONS ---- */

@@ -45,12 +45,15 @@ const updateDisplayWord = function (origWord) {
 const validateInput = function (input) {
     const acceptedLetter = /[a-zA-Z]/;
     if (input === "") {
-        return "Guess was empty!";
+        displayMessage.innerText = "Guess was empty!";
+        return -1; // Error code -1: Guess input was empty
     } else if (input.length > 1) {
-        return "Please guess only one letter at a time.";
+        displayMessage.innerText = "You may only guess one letter at a time.";
+        return -2; // Error code -2: Guess input had more than one character
     }
     else if (!input.match(acceptedLetter)) {
-        return "Guess must be a letter.";
+        displayMessage.innerText = "Guess must be a letter.";
+        return -3; // Error code -3: Guess was not a letter
     } else {
         return input;
     }
@@ -59,7 +62,13 @@ const validateInput = function (input) {
 
 const makeGuess = function (letter) {
     const upperCaseLetter = letter.toUpperCase();
-
+    if (guessedLetters.includes(upperCaseLetter)){
+        displayMessage.innerText = "You already guessed that letter. Try again!";
+        return "-1"; // Error code -1: Already guessed that letter
+    } else {
+        guessedLetters.push(letter);
+        console.log(guessedLetters);
+    }
 };
 
 updateDisplayWord(word);
@@ -70,7 +79,10 @@ guessButton.addEventListener("click", function (e) {
     guessInput.value = "";
     displayMessage.innerText = "";
     const checkedLetter = validateInput(guessedLetter);
-    console.log(checkedLetter);
+    if (typeof checkedLetter === "string"){
+        makeGuess(checkedLetter);
+    }
+
     
 });
 
