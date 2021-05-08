@@ -51,7 +51,13 @@ test(`updateDisplayWord should display hidden version of loaded word`, () => {
 test(`validateInput should output -1 if input is empty`, () => {
     const actual = wordLib.validateInput("");
     expect(actual).toBe(-1);
+});
 
+test(`validateInput should display error message if input is empty`, () => {
+    wordLib.validateInput("");
+    const message = document.querySelector('.message');
+    const actual = message.innerText;
+    expect(actual).toContain("empty");
 });
 
 test(`validateInput should output -2 if user inputs more than one letter`, () => {
@@ -59,15 +65,45 @@ test(`validateInput should output -2 if user inputs more than one letter`, () =>
     expect(actual).toBe(-2);
 });
 
+test(`validateInput should display error message if input contains more than one letter`, () => {
+    wordLib.validateInput("bm");
+    const message = document.querySelector('.message');
+    const actual = message.innerText;
+    expect(actual).toContain("one letter");
+});
+
 test(`validateInput should output -3 if user inputs non-letter`, () => {
     const actual = wordLib.validateInput("5");
     expect(actual).toBe(-3);
+});
+
+test(`validateInput should display error message if input contains non-letter`, () => {
+    wordLib.validateInput("5");
+    const message = document.querySelector('.message');
+    const actual = message.innerText;
+    expect(actual).toContain("must be a letter");
 });
 
 
 test(`validateInput should output letter if user inputs single letter`, () => {
     const actual = wordLib.validateInput("f");
     expect(actual).toBe("f");
+});
+
+test(`makeGuess should display error message if letter has already been guessed`, () => {
+    wordLib.makeGuess("f");
+    wordLib.makeGuess("f");
+    const message = document.querySelector('.message');
+    const actual = message.innerText;
+    expect(actual).toContain("already guessed");
+
+});
+
+test(`makeGuess should display one guessed letter on page`, () => {
+    wordLib.makeGuess("f");
+    const actualDisplay = document.querySelector(".guessed-letters");
+    const actual = actualDisplay.innerHTML;
+    expect(actual).toBe("<li>F</li>");
 });
 
 

@@ -64,12 +64,21 @@ const makeGuess = function (letter) {
     const upperCaseLetter = letter.toUpperCase();
     if (guessedLetters.includes(upperCaseLetter)){
         displayMessage.innerText = "You already guessed that letter. Try again!";
-        return "-1"; // Error code -1: Already guessed that letter
+        return "-4"; // Error code -4: Already guessed that letter
     } else {
-        guessedLetters.push(letter);
-        console.log(guessedLetters);
+        guessedLetters.push(upperCaseLetter);
+        updateGuessDisplay();
     }
 };
+
+const updateGuessDisplay = function () {
+    guessList.innerHTML = "";
+    for (var letter of guessedLetters) {
+        const li = document.createElement("li");
+        li.textContent = letter;
+        guessList.append(li);
+    }
+}
 
 updateDisplayWord(word);
 
@@ -94,6 +103,6 @@ if (typeof exports !== 'undefined') {
         transformWord: transformWord, 
         updateDisplayWord: updateDisplayWord,
         validateInput: validateInput,
-        guessedLetters: guessedLetters
+        makeGuess: makeGuess
     };
 }

@@ -7,7 +7,8 @@
     "author": "",
     "license": "ISC",
     "scripts": {
-        "test": "jest --coverage"
+        "test": "jest --coverage",
+        "debug": "node --debug-brk --inspect node_modules/.bin/jest"
     },
     "jest": {
         "automock": false,
