@@ -29,17 +29,23 @@ const playAgainButton = document.querySelector(".play-again");
 var word = "magnolia";
 var guessedLetters = [];
 
-const transformWord = function (origWord) {
-    var circleWord = "";
-    for (var letter of origWord) {
-        circleWord = circleWord.concat("●");
+const transformWord = function (origWord, guessArray) {
+    const wordUpper = origWord.toUpperCase();
+    const wordArray = wordUpper.split("");
+    var hiddenWord = "";
+    for (var letter of wordArray) {
+        if (guessArray.includes(letter)) {
+            hiddenWord = hiddenWord.concat(letter);
+        } else {
+            hiddenWord = hiddenWord.concat("●");
+        }
     }
-    return circleWord;
+    return hiddenWord;
 };
 
 
-const updateDisplayWord = function (origWord) {
-    displayWord.innerText = transformWord(origWord);
+const updateDisplayWord = function (origWord, guessArray) {
+    displayWord.innerText = transformWord(origWord, guessArray);
 };
 
 const validateInput = function (input) {
@@ -68,6 +74,7 @@ const makeGuess = function (letter) {
     } else {
         guessedLetters.push(upperCaseLetter);
         updateGuessDisplay();
+        updateDisplayWord(word,guessedLetters);
     }
 };
 
@@ -80,7 +87,7 @@ const updateGuessDisplay = function () {
     }
 }
 
-updateDisplayWord(word);
+updateDisplayWord(word, guessedLetters);
 
 guessButton.addEventListener("click", function (e) {
     e.preventDefault();

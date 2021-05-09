@@ -23,29 +23,47 @@ afterEach(() => {
     jest.resetModules();
 });
 
-test('transformWord should return ●●●●●●●● when input string is magnolia', () => {
+test('transformWord should return ●●●●●●●● when input string is magnolia and no letters have been guessed', () => {
     const input = "magnolia";
-    const output = wordLib.transformWord(input);
+    const array = [];
+    const output = wordLib.transformWord(input, array);
     const expected = "●●●●●●●●";
     expect(output).toBe(expected);
 });
 
+test(`transformWord should return ●a●●●●●a when input string is magnolia and only letter A has been guessed`, () => {
+    const input = "magnolia";
+    const array = ["A"];
+    const output = wordLib.transformWord(input, array);
+    const expected = "●A●●●●●A";
+    expect(output).toBe(expected);
+});
+
 test('transformWord should return empty string when input string is empty', () => {
-    let lib = require("../main/script");
     const input = "";
-    const output = wordLib.transformWord(input);
+    const array = [];
+    const output = wordLib.transformWord(input, array);
     const expected = "";
     expect(output).toBe(expected);
 
 });
 
-test(`updateDisplayWord should display hidden version of loaded word`, () => {
-    wordLib.updateDisplayWord("magnolia");
+test(`updateDisplayWord should display all circles when there are no guesses`, () => {
+    wordLib.updateDisplayWord("magnolia", []);
     const display = document.querySelector('.word-in-progress');
     const actual = display.innerText;
     const expected = "●●●●●●●●";
     expect(actual).toBe(expected);
 });
+
+test(`updateDisplayWord should display hidden version depending on guesses`, () => {
+    wordLib.updateDisplayWord("magnolia", ["A"]);
+    const display = document.querySelector('.word-in-progress');
+    const actual = display.innerText;
+    const expected = "●A●●●●●A";
+    expect(actual).toBe(expected);
+});
+
 
 
 test(`validateInput should output -1 if input is empty`, () => {
