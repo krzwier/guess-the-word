@@ -45,7 +45,8 @@ const transformWord = function (origWord, guessArray) {
 
 
 const updateDisplayWord = function (origWord, guessArray) {
-    displayWord.innerText = transformWord(origWord, guessArray);
+    displayWord.textContent = transformWord(origWord, guessArray);
+    checkForWin();
 };
 
 const validateInput = function (input) {
@@ -86,6 +87,14 @@ const updateGuessDisplay = function () {
         guessList.append(li);
     }
 }
+
+const checkForWin = function () {
+    if (displayWord.textContent === word.toUpperCase()) {
+        displayMessage.classList.add("win");
+        displayMessage.innerHTML = '<p class="highlight">You guessed the correct word! Congrats!</p>';
+    }
+}
+
 
 updateDisplayWord(word, guessedLetters);
 

@@ -21,6 +21,7 @@ beforeEach(() => {
 afterEach(() => {
     // restore the original func after test
     jest.resetModules();
+    document.innerHTML = "";
 });
 
 test('transformWord should return ●●●●●●●● when input string is magnolia and no letters have been guessed', () => {
@@ -51,7 +52,7 @@ test('transformWord should return empty string when input string is empty', () =
 test(`updateDisplayWord should display all circles when there are no guesses`, () => {
     wordLib.updateDisplayWord("magnolia", []);
     const display = document.querySelector('.word-in-progress');
-    const actual = display.innerText;
+    const actual = display.textContent;
     const expected = "●●●●●●●●";
     expect(actual).toBe(expected);
 });
@@ -59,7 +60,7 @@ test(`updateDisplayWord should display all circles when there are no guesses`, (
 test(`updateDisplayWord should display hidden version depending on guesses`, () => {
     wordLib.updateDisplayWord("magnolia", ["A"]);
     const display = document.querySelector('.word-in-progress');
-    const actual = display.innerText;
+    const actual = display.textContent;
     const expected = "●A●●●●●A";
     expect(actual).toBe(expected);
 });
@@ -109,6 +110,7 @@ test(`validateInput should output letter if user inputs single letter`, () => {
 });
 
 test(`makeGuess should display error message if letter has already been guessed`, () => {
+    wordLib.updateDisplayWord("magnolia", []);
     wordLib.makeGuess("f");
     wordLib.makeGuess("f");
     const message = document.querySelector('.message');
@@ -118,12 +120,27 @@ test(`makeGuess should display error message if letter has already been guessed`
 });
 
 test(`makeGuess should display one guessed letter on page`, () => {
+    wordLib.updateDisplayWord("magnolia", []);
     wordLib.makeGuess("f");
     const actualDisplay = document.querySelector(".guessed-letters");
     const actual = actualDisplay.innerHTML;
     expect(actual).toBe("<li>F</li>");
 });
 
+test(`makeGuess should display win message when player has guessed all letters`, () => {
+    wordLib.updateDisplayWord("magnolia", []);
+    wordLib.makeGuess("m");
+    wordLib.makeGuess("a");
+    wordLib.makeGuess("g");
+    wordLib.makeGuess("n");
+    wordLib.makeGuess("o");
+    wordLib.makeGuess("l");
+    wordLib.makeGuess("i");
+    const message = document.querySelector('.message');
+    const actual = message.textContent;
+    expect(actual).toContain("Congrats!");
+    
+});
 
 
 /* ---- TESTS FOR USER INTERACTIONS ---- */
