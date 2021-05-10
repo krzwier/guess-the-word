@@ -15,9 +15,6 @@ const displayWord = document.querySelector(".word-in-progress");
 // Paragraph where remaining guesses displays
 const displayRemaining = document.querySelector(".remaining");
 
-// Span inside paragraph where remaining guesses displays
-const displayRemainingSpan = document.querySelector(".remaining span");
-
 // Paragraph where messages appear when player guesses a letter
 const displayMessage = document.querySelector(".message");
 
@@ -26,15 +23,23 @@ const playAgainButton = document.querySelector(".play-again");
 
 
 /* ---- GLOBAL VARIABLES ---- */
-var word = "magnolia";
-var guessedLetters = [];
-var remainingGuesses = 8;
+let word = "";
+let guessedLetters = [];
+let remainingGuesses = 8;
+
+const getWord = async function () {
+    const textFile = await fetch("https://gist.githubusercontent.com/skillcrush-curriculum/7061f1d4d3d5bfe47efbfbcfe42bf57e/raw/5ffc447694486e7dea686f34a6c085ae371b43fe/words.txt");
+    const words = await textFile.text();
+    const wordArray = words.split("\n");
+    const randomIndex = Math.floor(Math.random() * 823);
+    return wordArray[randomIndex].trim();        
+}
 
 const transformWord = function (origWord, guessArray) {
     const wordUpper = origWord.toUpperCase();
     const wordArray = wordUpper.split("");
-    var hiddenWord = "";
-    for (var letter of wordArray) {
+    let hiddenWord = "";
+    for (let letter of wordArray) {
         if (guessArray.includes(letter)) {
             hiddenWord = hiddenWord.concat(letter);
         } else {
@@ -83,12 +88,12 @@ const makeGuess = function (letter) {
 
 const updateGuessDisplay = function () {
     guessList.innerHTML = "";
-    for (var letter of guessedLetters) {
+    for (let letter of guessedLetters) {
         const li = document.createElement("li");
         li.textContent = letter;
         guessList.append(li);
     }
-}
+};
 
 const updateRemainingGuesses = function (guess) {
     const capitalWord = word.toUpperCase();
@@ -113,14 +118,14 @@ const checkForWin = function () {
         displayMessage.classList.add("win");
         displayMessage.innerHTML = '<p class="highlight">You guessed the correct word! Congrats!</p>';
     }
-}
+};
 
-const newGame = function () {
+const newGame = async function () {
     remainingGuesses = 8;
     guessedLetters = [];
-    word = "magnolia";
+    word = await getWord();
     updateDisplayWord(word, guessedLetters);
-}
+};
 
 newGame();
 
