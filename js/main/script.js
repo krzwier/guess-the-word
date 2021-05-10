@@ -28,6 +28,7 @@ const playAgainButton = document.querySelector(".play-again");
 /* ---- GLOBAL VARIABLES ---- */
 var word = "magnolia";
 var guessedLetters = [];
+var remainingGuesses = 8;
 
 const transformWord = function (origWord, guessArray) {
     const wordUpper = origWord.toUpperCase();
@@ -75,6 +76,7 @@ const makeGuess = function (letter) {
     } else {
         guessedLetters.push(upperCaseLetter);
         updateGuessDisplay();
+        updateRemainingGuesses(letter);
         updateDisplayWord(word,guessedLetters);
     }
 };
@@ -87,6 +89,24 @@ const updateGuessDisplay = function () {
         guessList.append(li);
     }
 }
+
+const updateRemainingGuesses = function (guess) {
+    const capitalWord = word.toUpperCase();
+    if (capitalWord.includes(guess.toUpperCase())) {
+        displayMessage.textContent = `Yes! You guessed a letter in the word!`;
+    } else {
+        displayMessage.textContent = `Sorry, the word does not contain the letter "${guess.toUpperCase()}".`;
+        remainingGuesses--;
+    }
+    if (remainingGuesses === 0) {
+        displayMessage.textContent = `Game over. The word was '${word.toUpperCase}'`;
+    } else if (remainingGuesses === 1) {
+        displayRemaining.innerHTML = `You have <span>1 guess</span> remaining.`;
+    } else {
+        displayRemaining.innerHTML = `You have <span>${remainingGuesses} guesses</span> remaining.`;
+    }
+
+};
 
 const checkForWin = function () {
     if (displayWord.textContent === word.toUpperCase()) {
