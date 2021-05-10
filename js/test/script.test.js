@@ -14,6 +14,7 @@ jest
 beforeEach(() => {
     
     document.innerHTML = html.toString();
+    wordLib.newGame();
     
 
 });
@@ -25,6 +26,7 @@ afterEach(() => {
 });
 
 test('transformWord should return ●●●●●●●● when input string is magnolia and no letters have been guessed', () => {
+    wordLib.updateDisplayWord("magnolia", []);
     const input = "magnolia";
     const array = [];
     const output = wordLib.transformWord(input, array);
@@ -33,6 +35,7 @@ test('transformWord should return ●●●●●●●● when input string is 
 });
 
 test(`transformWord should return ●a●●●●●a when input string is magnolia and only letter A has been guessed`, () => {
+    wordLib.updateDisplayWord("magnolia", []);
     const input = "magnolia";
     const array = ["A"];
     const output = wordLib.transformWord(input, array);
@@ -110,7 +113,6 @@ test(`validateInput should output letter if user inputs single letter`, () => {
 });
 
 test(`makeGuess should display error message if letter has already been guessed`, () => {
-    wordLib.updateDisplayWord("magnolia", []);
     wordLib.makeGuess("f");
     wordLib.makeGuess("f");
     const message = document.querySelector('.message');
@@ -120,7 +122,6 @@ test(`makeGuess should display error message if letter has already been guessed`
 });
 
 test(`makeGuess should display one guessed letter on page`, () => {
-    wordLib.updateDisplayWord("magnolia", []);
     wordLib.makeGuess("f");
     const actualDisplay = document.querySelector(".guessed-letters");
     const actual = actualDisplay.innerHTML;
@@ -142,6 +143,64 @@ test(`makeGuess should display win message when player has guessed all letters`,
     
 });
 
+test(`updateGuessesRemaining should display end message when guesses run out`, () => {
+    wordLib.updateDisplayWord("magnolia", []);
+    wordLib.makeGuess("y");
+    wordLib.makeGuess("c");
+    wordLib.makeGuess("z");
+    wordLib.makeGuess("p");
+    wordLib.makeGuess("j");
+    wordLib.makeGuess("q");
+    wordLib.makeGuess("k");
+    wordLib.makeGuess("b");
+    const message = document.querySelector('.message');
+    const actual = message.textContent;
+    expect(actual).toContain("Game over");
+    
+});
+
+test(`updateGuessesRemaining should display 7 guesses after one wrong guess is made`, () => {
+    wordLib.updateDisplayWord("magnolia", []);
+    wordLib.makeGuess("y");
+    const message = document.querySelector('.remaining');
+    const actual = message.textContent;
+    expect(actual).toContain("7 guesses remaining");
+    
+});
+
+
+test(`updateGuessesRemaining should display 1 guess after seven wrong guesses are made`, () => {
+    wordLib.updateDisplayWord("magnolia", []);
+    wordLib.makeGuess("y");
+    wordLib.makeGuess("c");
+    wordLib.makeGuess("z");
+    wordLib.makeGuess("p");
+    wordLib.makeGuess("j");
+    wordLib.makeGuess("q");
+    wordLib.makeGuess("k");
+    const message = document.querySelector('.remaining');
+    const actual = message.textContent;
+    expect(actual).toContain("1 guess remaining");
+    
+});
+
+test(`updateGuessesRemaining should display message after correct guess`, () => {
+    wordLib.updateDisplayWord("magnolia", []);
+    wordLib.makeGuess("m");
+    const message = document.querySelector('.message');
+    const actual = message.textContent;
+    expect(actual).toContain("Good guess!");
+    
+});
+
+test(`updateGuessesRemaining should display message after incorrect guess`, () => {
+    wordLib.updateDisplayWord("magnolia", []);
+    wordLib.makeGuess("z");
+    const message = document.querySelector('.message');
+    const actual = message.textContent;
+    expect(actual).toContain("Sorry");
+    
+});
 
 /* ---- TESTS FOR USER INTERACTIONS ---- */
 

@@ -76,7 +76,7 @@ const makeGuess = function (letter) {
     } else {
         guessedLetters.push(upperCaseLetter);
         updateGuessDisplay();
-        updateRemainingGuesses(letter);
+        updateRemainingGuesses(upperCaseLetter);
         updateDisplayWord(word,guessedLetters);
     }
 };
@@ -92,14 +92,14 @@ const updateGuessDisplay = function () {
 
 const updateRemainingGuesses = function (guess) {
     const capitalWord = word.toUpperCase();
-    if (capitalWord.includes(guess.toUpperCase())) {
-        displayMessage.textContent = `Yes! You guessed a letter in the word!`;
+    if (capitalWord.includes(guess)) {
+        displayMessage.textContent = `Good guess!`;
     } else {
-        displayMessage.textContent = `Sorry, the word does not contain the letter "${guess.toUpperCase()}".`;
+        displayMessage.textContent = `Sorry, the word does not contain the letter "${guess}".`;
         remainingGuesses--;
     }
     if (remainingGuesses === 0) {
-        displayMessage.textContent = `Game over. The word was '${word.toUpperCase}'`;
+        displayMessage.textContent = `Game over. The word was "${capitalWord}".`;
     } else if (remainingGuesses === 1) {
         displayRemaining.innerHTML = `You have <span>1 guess</span> remaining.`;
     } else {
@@ -115,8 +115,14 @@ const checkForWin = function () {
     }
 }
 
+const newGame = function () {
+    remainingGuesses = 8;
+    guessedLetters = [];
+    word = "magnolia";
+    updateDisplayWord(word, guessedLetters);
+}
 
-updateDisplayWord(word, guessedLetters);
+newGame();
 
 guessButton.addEventListener("click", function (e) {
     e.preventDefault();
@@ -139,6 +145,7 @@ if (typeof exports !== 'undefined') {
         transformWord: transformWord, 
         updateDisplayWord: updateDisplayWord,
         validateInput: validateInput,
-        makeGuess: makeGuess
+        makeGuess: makeGuess,
+        newGame: newGame
     };
 }
