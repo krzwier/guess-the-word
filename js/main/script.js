@@ -28,11 +28,19 @@ let guessedLetters = [];
 let remainingGuesses = 8;
 
 const getWord = async function () {
-    const textFile = await fetch("https://gist.githubusercontent.com/skillcrush-curriculum/7061f1d4d3d5bfe47efbfbcfe42bf57e/raw/5ffc447694486e7dea686f34a6c085ae371b43fe/words.txt");
-    const words = await textFile.text();
-    const wordArray = words.split("\n");
-    const randomIndex = Math.floor(Math.random() * 823);
-    return wordArray[randomIndex].trim();        
+    try {
+        const textFile = await fetch("https://gist.githubusercontent.com/skillcrush-curriculum/7061f1d4d3d5bfe47efbfbcfe42bf57e/raw/5ffc447694486e7dea686f34a6c085ae371b43fe/words.txt");
+        const words = await textFile.text();
+        const wordArray = words.split("\n");
+        const randomIndex = Math.floor(Math.random() * 823);
+        const newWord = wordArray[randomIndex];
+        return wordArray.trim();
+    } catch (e) {
+        console.log("Error: Fetch unsuccessful. Word not loaded.")
+    }
+
+
+
 }
 
 const transformWord = function (origWord, guessArray) {
@@ -75,14 +83,14 @@ const validateInput = function (input) {
 
 const makeGuess = function (letter) {
     const upperCaseLetter = letter.toUpperCase();
-    if (guessedLetters.includes(upperCaseLetter)){
+    if (guessedLetters.includes(upperCaseLetter)) {
         displayMessage.innerText = "You already guessed that letter. Try again!";
         return "-4"; // Error code -4: Already guessed that letter
     } else {
         guessedLetters.push(upperCaseLetter);
         updateGuessDisplay();
         updateRemainingGuesses(upperCaseLetter);
-        updateDisplayWord(word,guessedLetters);
+        updateDisplayWord(word, guessedLetters);
     }
 };
 
@@ -123,11 +131,22 @@ const checkForWin = function () {
 const newGame = async function () {
     remainingGuesses = 8;
     guessedLetters = [];
-    word = await getWord();
+    try {
+        word = await getWord();
+        updateDisplayWord(word, guessedLetters);
+    } catch (e) {
+        console.log("Error: getWord() function failed");
+    }
+};
+
+const newGameSpecificWord = async function (specificWord) {
+    remainingGuesses = 8;
+    guessedLetters = [];
+    word = specificWord;
     updateDisplayWord(word, guessedLetters);
 };
 
-newGame();
+
 
 guessButton.addEventListener("click", function (e) {
     e.preventDefault();
@@ -135,22 +154,25 @@ guessButton.addEventListener("click", function (e) {
     guessInput.value = "";
     displayMessage.innerText = "";
     const checkedLetter = validateInput(guessedLetter);
-    if (typeof checkedLetter === "string"){
+    if (typeof checkedLetter === "string") {
         makeGuess(checkedLetter);
     }
 
-    
-});
 
+});
 
 /* ---- WRAPPER: EXPORT ONLY IF RUNNING TESTS ---- */
 /* istanbul ignore next */
 if (typeof exports !== 'undefined') {
-    module.exports = { 
-        transformWord: transformWord, 
+    module.exports = {
+        transformWord: transformWord,
         updateDisplayWord: updateDisplayWord,
         validateInput: validateInput,
         makeGuess: makeGuess,
-        newGame: newGame
+        newGame: newGame,
+        newGameSpecificWord: newGameSpecificWord,
+        getWord: getWord
     };
+} else {
+    newGame();
 }
