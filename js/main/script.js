@@ -23,24 +23,26 @@ const playAgainButton = document.querySelector(".play-again");
 
 
 /* ---- GLOBAL VARIABLES ---- */
+let wordList = [];
 let word = "";
 let guessedLetters = [];
 let remainingGuesses = 8;
 
-const getWord = async function () {
+
+const getWordList = async function () {
     try {
         const textFile = await fetch("https://gist.githubusercontent.com/skillcrush-curriculum/7061f1d4d3d5bfe47efbfbcfe42bf57e/raw/5ffc447694486e7dea686f34a6c085ae371b43fe/words.txt");
         const words = await textFile.text();
-        const wordArray = words.split("\n");
-        const randomIndex = Math.floor(Math.random() * 823);
-        const newWord = wordArray[randomIndex];
-        return wordArray.trim();
+        return words.split("\n");
     } catch (e) {
-        console.log("Error: Fetch unsuccessful. Word not loaded.")
+        console.log("getWordList() error: Fetch unsuccessful. Word list not loaded.")
     }
+}
 
-
-
+const getWord = async function () {
+    wordList = await getWordList();
+    const randomIndex = Math.floor(Math.random() * wordList.length);
+    return wordList[randomIndex].trim();
 }
 
 const transformWord = function (origWord, guessArray) {
@@ -131,12 +133,10 @@ const checkForWin = function () {
 const newGame = async function () {
     remainingGuesses = 8;
     guessedLetters = [];
-    try {
-        word = await getWord();
-        updateDisplayWord(word, guessedLetters);
-    } catch (e) {
-        console.log("Error: getWord() function failed");
-    }
+
+    word = await getWord();
+    updateDisplayWord(word, guessedLetters);
+
 };
 
 const newGameSpecificWord = async function (specificWord) {
@@ -145,7 +145,6 @@ const newGameSpecificWord = async function (specificWord) {
     word = specificWord;
     updateDisplayWord(word, guessedLetters);
 };
-
 
 
 guessButton.addEventListener("click", function (e) {
@@ -157,9 +156,9 @@ guessButton.addEventListener("click", function (e) {
     if (typeof checkedLetter === "string") {
         makeGuess(checkedLetter);
     }
-
-
 });
+
+newGame();
 
 /* ---- WRAPPER: EXPORT ONLY IF RUNNING TESTS ---- */
 /* istanbul ignore next */
@@ -171,8 +170,7 @@ if (typeof exports !== 'undefined') {
         makeGuess: makeGuess,
         newGame: newGame,
         newGameSpecificWord: newGameSpecificWord,
+        getWordList: getWordList,
         getWord: getWord
     };
-} else {
-    newGame();
-}
+} 

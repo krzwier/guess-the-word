@@ -27,6 +27,51 @@ afterEach(() => {
     // window.alert = jsdomAlert;
 });
 
+describe('getWordList', () => {
+    const log = global.console.log; // save original console.log function
+    beforeEach(() => {
+        fetch.resetMocks();
+        console.log = jest.fn();
+    });
+
+    afterAll(() => {
+        global.console.log = log; // restore original console.log after all tests
+    })
+
+    it('calls API and returns data', () => {
+        fetch.mockResponseOnce("alphabet\nfunny\nwordsmith");
+        wordLib.getWordList().then(res => {
+            expect(res).toEqual(["alphabet", "funny", "wordsmith"]);
+        });
+        expect(fetch.mock.calls.length).toEqual(1);
+        expect(fetch.mock.calls[0][0]).toEqual("https://gist.githubusercontent.com/skillcrush-curriculum/7061f1d4d3d5bfe47efbfbcfe42bf57e/raw/5ffc447694486e7dea686f34a6c085ae371b43fe/words.txt");
+    });
+
+    it('prints message to console on a failed fetch request', () => {
+        fetch.mockReject(new Error('Fetch failed'));
+        wordLib.getWordList().then(res => {
+            expect(global.console.log.mock.calls[0][0]).toContain("Fetch unsuccessful");
+        });
+
+    });
+
+});
+
+describe('newGame', () => {
+
+    it('displays "●●●●●" when API returns "funny"', () => {
+        fetch.mockResponseOnce("funny");
+        wordLib.newGame().then(() => {
+            const display = document.querySelector('.word-in-progress');
+            const actual = display.textContent;
+            const expected = "●●●●●";
+            expect(actual).toBe(expected);
+        });
+
+    })
+
+});
+
 describe('transformWord', () => {
     it('returns ●●●●●●●● when input string is magnolia and no letters have been guessed', () => {
         wordLib.newGameSpecificWord("magnolia");
@@ -233,11 +278,22 @@ describe('updateGuessesRemaining', () => {
 
 });
 
+
+
 /* ---- TESTS FOR USER INTERACTIONS ---- */
 
 /* Note: Form submission is not implemented in jsdom.  Need to find a way of
 running UI tests like the ones below. Enzyme appears to do this, but I haven't
 figured out how to make it work yet.
+
+// describe('Guess button', () => {
+//     it('updates word in progress when guess button is clicked', () => {
+//         const guessForm = document.querySelector(".guess-form");
+//         guessForm.simulate("submit");
+
+
+//     });
+// })
 
 test('guess button should not reload page', () => {
 
