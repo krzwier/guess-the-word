@@ -115,10 +115,11 @@ const updateRemainingGuesses = function (guess) {
     }
     if (remainingGuesses === 0) {
         displayMessage.textContent = `Game over. The word was "${capitalWord}".`;
+        startOver();
     } else if (remainingGuesses === 1) {
-        displayRemaining.innerHTML = `You have <span>1 guess</span> remaining.`;
+        displayRemaining.innerHTML = `You have <span>1 incorrect guess</span> remaining.`;
     } else {
-        displayRemaining.innerHTML = `You have <span>${remainingGuesses} guesses</span> remaining.`;
+        displayRemaining.innerHTML = `You have <span>${remainingGuesses} incorrect guesses</span> remaining.`;
     }
 
 };
@@ -127,6 +128,7 @@ const checkForWin = function () {
     if (displayWord.textContent === word.toUpperCase()) {
         displayMessage.classList.add("win");
         displayMessage.innerHTML = '<p class="highlight">You guessed the correct word! Congrats!</p>';
+        startOver();
     }
 };
 
@@ -146,12 +148,19 @@ const newGameSpecificWord = async function (specificWord) {
     updateDisplayWord(word, guessedLetters);
 };
 
+const startOver = function () {
+    guessButton.classList.add("hide");
+    displayRemaining.classList.add("hide");
+    guessList.classList.add("hide");
+    playAgainButton.classList.remove("hide");
+};
+
 
 guessButton.addEventListener("click", function (e) {
     e.preventDefault();
     const guessedLetter = guessInput.value;
     guessInput.value = "";
-    displayMessage.innerText = "";
+    displayMessage.textContent = "";
     const checkedLetter = validateInput(guessedLetter);
     if (typeof checkedLetter === "string") {
         makeGuess(checkedLetter);
@@ -171,6 +180,7 @@ if (typeof exports !== 'undefined') {
         newGame: newGame,
         newGameSpecificWord: newGameSpecificWord,
         getWordList: getWordList,
-        getWord: getWord
+        getWord: getWord,
+        startOver: startOver
     };
 } 

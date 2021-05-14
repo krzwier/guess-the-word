@@ -10,7 +10,6 @@ const wordLib = require("../main/script");
 jest
     .dontMock('fs');
 
-// window.alert = jest.fn();  // provide an empty implementation for window.alert
 
 
 beforeEach(() => {
@@ -21,14 +20,16 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-    // restore the original func after test
+
     jest.resetModules();
     document.innerHTML = "";
-    // window.alert = jsdomAlert;
+
 });
 
 describe('getWordList', () => {
+
     const log = global.console.log; // save original console.log function
+
     beforeEach(() => {
         fetch.resetMocks();
         console.log = jest.fn();
@@ -209,6 +210,19 @@ describe('makeGuess', () => {
         expect(actual).toContain("Congrats!");
 
     });
+
+    it(`displays play again button after game is won`, () => {
+        wordLib.newGameSpecificWord("magnolia");
+        wordLib.makeGuess("m");
+        wordLib.makeGuess("a");
+        wordLib.makeGuess("g");
+        wordLib.makeGuess("n");
+        wordLib.makeGuess("o");
+        wordLib.makeGuess("l");
+        wordLib.makeGuess("i");
+        const playAgainButton = document.querySelector(".play-again");
+        expect(playAgainButton.classList.contains("hide")).toBe(false);
+    });
 });
 
 describe('updateGuessesRemaining', () => {
@@ -229,18 +243,18 @@ describe('updateGuessesRemaining', () => {
 
     });
 
-    it(`displays "7 guesses remaining" after one wrong guess is made`, () => {
+    it(`displays "7 incorrect guesses remaining" after one wrong guess is made`, () => {
         wordLib.newGameSpecificWord("magnolia");
         // wordLib.updateDisplayWord("magnolia", []);
         wordLib.makeGuess("y");
         const message = document.querySelector('.remaining');
         const actual = message.textContent;
-        expect(actual).toContain("7 guesses remaining");
+        expect(actual).toContain("7 incorrect guesses remaining");
 
     });
 
 
-    it(`displays "1 guess remaining" after seven wrong guesses are made`, () => {
+    it(`displays "1 incorrect guess remaining" after seven wrong guesses are made`, () => {
         wordLib.newGameSpecificWord("magnolia");
         // wordLib.updateDisplayWord("magnolia", []);
         wordLib.makeGuess("y");
@@ -252,7 +266,7 @@ describe('updateGuessesRemaining', () => {
         wordLib.makeGuess("k");
         const message = document.querySelector('.remaining');
         const actual = message.textContent;
-        expect(actual).toContain("1 guess remaining");
+        expect(actual).toContain("1 incorrect guess remaining");
 
     });
 
@@ -276,83 +290,73 @@ describe('updateGuessesRemaining', () => {
 
     });
 
-});
-
-
-
-/* ---- TESTS FOR USER INTERACTIONS ---- */
-
-/* Note: Form submission is not implemented in jsdom.  Need to find a way of
-running UI tests like the ones below. Enzyme appears to do this, but I haven't
-figured out how to make it work yet.
-
-// describe('Guess button', () => {
-//     it('updates word in progress when guess button is clicked', () => {
-//         const guessForm = document.querySelector(".guess-form");
-//         guessForm.simulate("submit");
-
-
-//     });
-// })
-
-test('guess button should not reload page', () => {
-
-    // MOCK window.location.reload
-    // keep a copy of the window object to restore it at the end of the tests
-    const oldWindowLocation = window.location;
-    // delete the existing `Location` object from `jsdom`
-    delete window.location;
-    // create a new `window.location` object that's almost like the real thing
-    window.location = Object.defineProperties(
-        // start with an empty object on which to define properties
-        {},
-        {
-            // grab all of the property descriptors for the `jsdom` `Location` object
-            ...Object.getOwnPropertyDescriptors(oldWindowLocation),
-            // overwrite a mocked method for `window.location.reload`
-            reload: {
-                configurable: true,
-                value: jest.fn(),
-            },
-        }
-    );
-
-    const guessButton = document.querySelector('.guess');
-    simulateClick(guessButton);
-
-    expect(window.location.reload).not.toHaveBeenCalled();
-
-    // restore `window.location` to the original `jsdom`
-    // `Location` object
-    window.location = oldWindowLocation;
-});
-
-test('guess button should empty input', () => {
-    // const onSubmit = jest.fn().mockImplementation((e) => e.preventDefault());
-    // const onSubmit = jest.fn();
-    // jest.spyOn(object, 'window.location.reload');
-
-    // const wrapper = shallow(
-    // <form action="" class="guess-form">
-    //     <label for="letter">Type one letter:</label>
-    //     <input type="text" name="letter" class="letter" />
-    //     <div class="form-element button-element">
-    //       <button class="guess">Guess!</button>
-    //     </div>
-    //   </form>);
-    // const guessInput = wrapper.find('.letter');
-    // guessInput.value = "stuff";
-    // const guessButton = wrapper.find('.guess');
-    // guessButton.simulate('click');
-    const guessButton = document.querySelector(".guess");
-    const guessInput = document.querySelector(".letter");
-    guessInput.value = "stuff";
-    guessButton.click();
-    // const guessForm = document.querySelector(".guess-form");
-    // guessForm.simulate("submit");
-    expect(guessInput.value).toBe("");
+    it(`displays play again button after game is lost`, () => {
+        wordLib.newGameSpecificWord("magnolia");
+        wordLib.makeGuess("y");
+        wordLib.makeGuess("c");
+        wordLib.makeGuess("z");
+        wordLib.makeGuess("p");
+        wordLib.makeGuess("j");
+        wordLib.makeGuess("q");
+        wordLib.makeGuess("k");
+        const playAgainButton = document.querySelector(".play-again");
+        expect(playAgainButton.classList.contains("hide")).toBe(false);
+    });
 
 });
 
-*/
+describe('startOver', () => {
+
+    it('hides guess button', () => {
+        wordLib.startOver();
+        const guessButton = document.querySelector(".guess");
+        expect(guessButton.classList.contains("hide")).toBe(true);
+    });
+
+    it('hides remaining guesses display', () => {
+        wordLib.startOver();
+        const remainingGuesses = document.querySelector(".remaining");
+        expect(remainingGuesses.classList.contains("hide")).toBe(true);
+    });
+
+    it('hides guessed letters list', () => {
+        wordLib.startOver();
+        const guessedLetters = document.querySelector("ul");
+        expect(guessedLetters.classList.contains("hide")).toBe(true);
+    });
+
+    it('unhides play again button', () => {
+        wordLib.startOver();
+        const playAgainButton = document.querySelector(".play-again");
+        expect(playAgainButton.classList.contains("hide")).toBe(false);
+    });
+});
+
+
+describe('Clicking guess button', () => {
+
+    it('empties input', () => {
+        const guessButton = document.querySelector(".guess");
+        const guessInput = document.querySelector(".letter");
+        guessInput.value = "stuff";
+        guessButton.click();
+        expect(guessInput.value).toBe("");
+    });
+
+    it('updates word display if correct letter is guessed', () => {
+        wordLib.newGameSpecificWord("magnolia");
+        const guessInput = document.querySelector(".letter");
+        guessInput.value = "A";
+        const guessButton = document.querySelector(".guess");
+        guessButton.click();
+        const display = document.querySelector('.word-in-progress');
+        const actual = display.textContent;
+        const expected = "●A●●●●●A";
+        expect(actual).toBe(expected);
+
+
+    });
+
+});
+
 

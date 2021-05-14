@@ -12,7 +12,6 @@
     },
     "jest": {
         "automock": false,
-        "verbose": false,
         "setupFilesAfterEnv": [
             "<rootDir>/setupJest.js"
         ]
