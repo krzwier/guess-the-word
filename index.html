@@ -10,7 +10,7 @@
       rel="stylesheet" />
     <link rel="stylesheet" href="css/normalize.css" />
     <link rel="stylesheet" href="css/styles.css" />
-    <script src="js/script.js" defer></script>
+    <script src="js/main/script.js" defer></script>
   </head>
 
   <body>
@@ -23,13 +23,13 @@
       <p class="word-in-progress"></p>
       <p class="remaining">You have <span>8 guesses</span> remaining.</p>
       <ul class="guessed-letters"></ul>
-      <form action="" class="guess-form">
+      <div class="guess-form">
         <label for="letter">Type one letter:</label>
         <input type="text" name="letter" class="letter" />
         <div class="form-element button-element">
           <button class="guess">Guess!</button>
         </div>
-      </form>
+      </div>
       <button class="play-again hide">Play Again!</button>
     </div>
   </body>

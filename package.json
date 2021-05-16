@@ -1,0 +1,24 @@
+{
+    "name": "guess-the-word",
+    "type": "module",
+    "description": "",
+    "main": "js/main/script.js",
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "scripts": {
+        "test": "jest --verbose --coverage",
+        "debug": "node --debug-brk --inspect node_modules/.bin/jest"
+    },
+    "jest": {
+        "automock": false,
+        "setupFilesAfterEnv": [
+            "<rootDir>/setupJest.js"
+        ]
+    },
+    "devDependencies": {
+        "@testing-library/jest-dom": "^5.12.0",
+        "jest": "^26.5.0",
+        "jest-fetch-mock": "^3.0.3"
+    }
+}
