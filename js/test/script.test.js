@@ -5,25 +5,15 @@ const html = fs.readFileSync(path.resolve(__dirname, '../../index.html'), 'utf8'
 // must load document here, or else import below will fail
 document.documentElement.innerHTML = html.toString();
 const wordLib = require("../main/script");
-// const jsdomAlert = window.alert;
-
-jest
-    .dontMock('fs');
-
-
 
 beforeEach(() => {
-
     document.innerHTML = html.toString();
     fetchMock.doMock()
-
 });
 
 afterEach(() => {
-
     jest.resetModules();
     document.innerHTML = "";
-
 });
 
 describe('getWordList', () => {
@@ -50,7 +40,7 @@ describe('getWordList', () => {
 
     it('prints message to console on a failed fetch request', () => {
         fetch.mockReject(new Error('Fetch failed'));
-        wordLib.getWordList().then(res => {
+        wordLib.getWordList().then(() => {
             expect(global.console.log.mock.calls[0][0]).toContain("Fetch unsuccessful");
         });
 
@@ -85,7 +75,6 @@ describe('transformWord', () => {
 
     it(`returns ●a●●●●●a when input string is magnolia and only letter A has been guessed`, () => {
         wordLib.newGameSpecificWord("magnolia");
-        // wordLib.updateDisplayWord("magnolia", []);
         const input = "magnolia";
         const array = ["A"];
         const output = wordLib.transformWord(input, array);
@@ -107,7 +96,6 @@ describe('transformWord', () => {
 describe('updateDisplayWord', () => {
     it(`displays all circles when there are no guesses`, () => {
         wordLib.newGameSpecificWord("magnolia");
-        // wordLib.updateDisplayWord("magnolia", []);
         const display = document.querySelector('.word-in-progress');
         const actual = display.textContent;
         const expected = "●●●●●●●●";
@@ -117,7 +105,6 @@ describe('updateDisplayWord', () => {
     it(`displays hidden version depending on guesses`, () => {
         wordLib.newGameSpecificWord("magnolia");
         wordLib.makeGuess("a");
-        // wordLib.updateDisplayWord("magnolia", ["A"]);
         const display = document.querySelector('.word-in-progress');
         const actual = display.textContent;
         const expected = "●A●●●●●A";
@@ -197,7 +184,6 @@ describe('makeGuess', () => {
 
     it(`displays win message when player has guessed all letters`, () => {
         wordLib.newGameSpecificWord("magnolia");
-        // wordLib.updateDisplayWord("magnolia", []);
         wordLib.makeGuess("m");
         wordLib.makeGuess("a");
         wordLib.makeGuess("g");
@@ -228,7 +214,6 @@ describe('makeGuess', () => {
 describe('updateGuessesRemaining', () => {
     it(`displays "Game over" when guesses run out`, () => {
         wordLib.newGameSpecificWord("magnolia");
-        // wordLib.updateDisplayWord("magnolia", []);
         wordLib.makeGuess("y");
         wordLib.makeGuess("c");
         wordLib.makeGuess("z");
@@ -245,7 +230,6 @@ describe('updateGuessesRemaining', () => {
 
     it(`displays "7 incorrect guesses remaining" after one wrong guess is made`, () => {
         wordLib.newGameSpecificWord("magnolia");
-        // wordLib.updateDisplayWord("magnolia", []);
         wordLib.makeGuess("y");
         const message = document.querySelector('.remaining');
         const actual = message.textContent;
@@ -256,7 +240,6 @@ describe('updateGuessesRemaining', () => {
 
     it(`displays "1 incorrect guess remaining" after seven wrong guesses are made`, () => {
         wordLib.newGameSpecificWord("magnolia");
-        // wordLib.updateDisplayWord("magnolia", []);
         wordLib.makeGuess("y");
         wordLib.makeGuess("c");
         wordLib.makeGuess("z");
@@ -272,7 +255,6 @@ describe('updateGuessesRemaining', () => {
 
     it(`displays "Good guess!" after correct guess`, () => {
         wordLib.newGameSpecificWord("magnolia");
-        // wordLib.updateDisplayWord("magnolia", []);
         wordLib.makeGuess("m");
         const message = document.querySelector('.message');
         const actual = message.textContent;
@@ -282,7 +264,6 @@ describe('updateGuessesRemaining', () => {
 
     it(`displays "Sorry" after incorrect guess`, () => {
         wordLib.newGameSpecificWord("magnolia");
-        // wordLib.updateDisplayWord("magnolia", []);
         wordLib.makeGuess("z");
         const message = document.querySelector('.message');
         const actual = message.textContent;
@@ -299,6 +280,7 @@ describe('updateGuessesRemaining', () => {
         wordLib.makeGuess("j");
         wordLib.makeGuess("q");
         wordLib.makeGuess("k");
+        wordLib.makeGuess("b");
         const playAgainButton = document.querySelector(".play-again");
         expect(playAgainButton.classList.contains("hide")).toBe(false);
     });
@@ -330,8 +312,48 @@ describe('startOver', () => {
         const playAgainButton = document.querySelector(".play-again");
         expect(playAgainButton.classList.contains("hide")).toBe(false);
     });
+
+    it('hides letter input and "Type one letter:" message', () => {
+        wordLib.startOver();
+        const label = document.querySelector("label");
+        const guessInput = document.querySelector(".letter");
+        expect(label.classList.contains("hide")).toBe(true);
+        expect(guessInput.classList.contains("hide")).toBe(true);
+    });
+
 });
 
+describe('Pressing enter in guess input', () => {
+
+    it('updates word display if correct letter is guessed', () => {
+        wordLib.newGameSpecificWord("magnolia");
+        const guessInput = document.querySelector(".letter");
+        guessInput.value = "A";
+        const event = new KeyboardEvent("keydown", {'key': 'Enter'});
+        guessInput.dispatchEvent(event);
+        const display = document.querySelector('.word-in-progress');
+        const actual = display.textContent;
+        const expected = "●A●●●●●A";
+        expect(actual).toBe(expected);
+
+
+    });
+});
+
+describe('Pressing key that is not enter in guess input', () => {
+    it('does not update word display', () => {
+        wordLib.newGameSpecificWord("magnolia");
+        const guessInput = document.querySelector(".letter");
+        guessInput.value = "A";
+        const event = new KeyboardEvent("keydown", {'key': '3'});
+        guessInput.dispatchEvent(event);
+        const display = document.querySelector('.word-in-progress');
+        const actual = display.textContent;
+        const expected = "●●●●●●●●";
+        expect(actual).toBe(expected);
+
+    });
+});
 
 describe('Clicking guess button', () => {
 
@@ -356,6 +378,178 @@ describe('Clicking guess button', () => {
 
 
     });
+
+});
+
+describe('Clicking "Play again" button', () => {
+
+    beforeEach(() => {
+        fetch.resetMocks();
+        fetch.mockResponseOnce("funny");
+    });
+
+
+    it('removes win class from message element', () => {
+        wordLib.newGameSpecificWord("magnolia");
+        wordLib.makeGuess("m");
+        wordLib.makeGuess("a");
+        wordLib.makeGuess("g");
+        wordLib.makeGuess("n");
+        wordLib.makeGuess("o");
+        wordLib.makeGuess("l");
+        wordLib.makeGuess("i");
+        const playAgainButton = document.querySelector(".play-again");
+        playAgainButton.click();
+        const message = document.querySelector('.message');
+        expect(message.classList.contains("win")).toBe(false);
+
+    });
+
+    it('empties message text', () => {
+        const playAgainButton = document.querySelector(".play-again");
+        playAgainButton.click();
+        const message = document.querySelector('.message');
+        expect(message.textContent).toBe("");
+
+    });
+
+    it('empties guess list', () => {
+        wordLib.newGameSpecificWord("magnolia");
+        wordLib.makeGuess("y");
+        wordLib.makeGuess("c");
+        wordLib.makeGuess("z");
+        wordLib.makeGuess("p");
+        wordLib.makeGuess("j");
+        wordLib.makeGuess("q");
+        wordLib.makeGuess("k");
+        wordLib.makeGuess("b");
+        const playAgainButton = document.querySelector(".play-again");
+        playAgainButton.click();
+        const guessList = document.querySelector("ul");
+        expect(guessList.innerHTML).toBe("");
+    })
+
+    it('resets message about remaining guesses', () => {
+        wordLib.newGameSpecificWord("magnolia");
+        wordLib.makeGuess("y");
+        wordLib.makeGuess("c");
+        wordLib.makeGuess("z");
+        wordLib.makeGuess("p");
+        wordLib.makeGuess("j");
+        wordLib.makeGuess("q");
+        wordLib.makeGuess("k");
+        wordLib.makeGuess("b");
+        const playAgainButton = document.querySelector(".play-again");
+        playAgainButton.click();
+        const message = document.querySelector('.remaining');
+        const actual = message.textContent;
+        expect(actual).toContain("8 incorrect guesses remaining");
+    });
+
+    it('unhides guess button', () => {
+        wordLib.newGameSpecificWord("magnolia");
+        wordLib.makeGuess("y");
+        wordLib.makeGuess("c");
+        wordLib.makeGuess("z");
+        wordLib.makeGuess("p");
+        wordLib.makeGuess("j");
+        wordLib.makeGuess("q");
+        wordLib.makeGuess("k");
+        wordLib.makeGuess("b");
+        const playAgainButton = document.querySelector(".play-again");
+        playAgainButton.click();
+        const guessButton = document.querySelector(".guess");
+        expect(guessButton.classList.contains("hide")).toBe(false);
+    });
+
+
+    it('unhides remaining guesses display', () => {
+        wordLib.newGameSpecificWord("magnolia");
+        wordLib.makeGuess("y");
+        wordLib.makeGuess("c");
+        wordLib.makeGuess("z");
+        wordLib.makeGuess("p");
+        wordLib.makeGuess("j");
+        wordLib.makeGuess("q");
+        wordLib.makeGuess("k");
+        wordLib.makeGuess("b");
+        const playAgainButton = document.querySelector(".play-again");
+        playAgainButton.click();
+        const remainingGuesses = document.querySelector(".remaining");
+        expect(remainingGuesses.classList.contains("hide")).toBe(false);
+    });
+
+    it('unhides guessed letters display', () => {
+        wordLib.newGameSpecificWord("magnolia");
+        wordLib.makeGuess("y");
+        wordLib.makeGuess("c");
+        wordLib.makeGuess("z");
+        wordLib.makeGuess("p");
+        wordLib.makeGuess("j");
+        wordLib.makeGuess("q");
+        wordLib.makeGuess("k");
+        wordLib.makeGuess("b");
+        const playAgainButton = document.querySelector(".play-again");
+        playAgainButton.click();
+        const guessList = document.querySelector(".guessed-letters");
+        expect(guessList.classList.contains("hide")).toBe(false);
+    });
+
+    it('unhides letter input and label', () => {
+        wordLib.newGameSpecificWord("magnolia");
+        wordLib.makeGuess("y");
+        wordLib.makeGuess("c");
+        wordLib.makeGuess("z");
+        wordLib.makeGuess("p");
+        wordLib.makeGuess("j");
+        wordLib.makeGuess("q");
+        wordLib.makeGuess("k");
+        wordLib.makeGuess("b");
+        const playAgainButton = document.querySelector(".play-again");
+        playAgainButton.click();
+        const label = document.querySelector("label");
+        expect(label.classList.contains("hide")).toBe(false);
+        const letter = document.querySelector(".letter");
+        expect(letter.classList.contains("hide")).toBe(false);
+    });
+
+    it('hides "play again" button', () => {
+        wordLib.newGameSpecificWord("magnolia");
+        wordLib.makeGuess("y");
+        wordLib.makeGuess("c");
+        wordLib.makeGuess("z");
+        wordLib.makeGuess("p");
+        wordLib.makeGuess("j");
+        wordLib.makeGuess("q");
+        wordLib.makeGuess("k");
+        wordLib.makeGuess("b");
+        const playAgainButton = document.querySelector(".play-again");
+        playAgainButton.click();
+        expect(playAgainButton.classList.contains("hide")).toBe(true);
+    });
+
+    it('displays new word as "●●●●●"', () => {
+        wordLib.newGameSpecificWord("magnolia");
+        wordLib.makeGuess("m");
+        wordLib.makeGuess("a");
+        wordLib.makeGuess("g");
+        wordLib.makeGuess("n");
+        wordLib.makeGuess("o");
+        wordLib.makeGuess("l");
+        wordLib.makeGuess("i");
+        const playAgainButton = document.querySelector(".play-again");
+        // return promise after async word fetch operation
+        return playAgainButton.click((result) => {
+            const display = document.querySelector('.word-in-progress');
+            const actual = display.textContent;
+            const expected = "●●●●●";
+            expect(actual).toBe(expected);
+        });
+    });
+
+
+
+
 
 });
 

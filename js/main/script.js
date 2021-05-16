@@ -6,6 +6,9 @@ const guessList = document.querySelector(".guessed-letters");
 // Button with text "Guess!" on it
 const guessButton = document.querySelector(".guess");
 
+// Label for guessInput
+const letterLabel = document.querySelector("label");
+
 // Text input where player guesses letter
 const guessInput = document.querySelector(".letter");
 
@@ -35,7 +38,7 @@ const getWordList = async function () {
         const words = await textFile.text();
         return words.split("\n");
     } catch (e) {
-        console.log("getWordList() error: Fetch unsuccessful. Word list not loaded.")
+        console.log(`Fetch unsuccessful. Word list not loaded.`);
     }
 }
 
@@ -135,13 +138,12 @@ const checkForWin = function () {
 const newGame = async function () {
     remainingGuesses = 8;
     guessedLetters = [];
-
     word = await getWord();
     updateDisplayWord(word, guessedLetters);
-
+    return word;
 };
 
-const newGameSpecificWord = async function (specificWord) {
+const newGameSpecificWord = function (specificWord) {
     remainingGuesses = 8;
     guessedLetters = [];
     word = specificWord;
@@ -153,11 +155,11 @@ const startOver = function () {
     displayRemaining.classList.add("hide");
     guessList.classList.add("hide");
     playAgainButton.classList.remove("hide");
+    letterLabel.classList.add("hide");
+    guessInput.classList.add("hide");
 };
 
-
-guessButton.addEventListener("click", function (e) {
-    e.preventDefault();
+const guess = function () {
     const guessedLetter = guessInput.value;
     guessInput.value = "";
     displayMessage.textContent = "";
@@ -165,6 +167,31 @@ guessButton.addEventListener("click", function (e) {
     if (typeof checkedLetter === "string") {
         makeGuess(checkedLetter);
     }
+};
+
+guessInput.addEventListener("keydown", function (e) {
+    if (e.key === "Enter"){
+        guess();
+    }
+})
+
+guessButton.addEventListener("click", function () {
+    guess();
+});
+
+playAgainButton.addEventListener("click", function () {
+    displayMessage.classList.remove("win");
+    displayMessage.textContent = "";
+    guessList.innerHTML = "";
+    displayRemaining.innerHTML = "You have <span>8 incorrect guesses</span> remaining."
+    guessButton.classList.remove("hide");
+    displayRemaining.classList.remove("hide");
+    guessList.classList.remove("hide");
+    playAgainButton.classList.add("hide");
+    guessInput.classList.remove("hide");
+    letterLabel.classList.remove("hide");
+    return newGame();
+    
 });
 
 newGame();
@@ -183,4 +210,4 @@ if (typeof exports !== 'undefined') {
         getWord: getWord,
         startOver: startOver
     };
-} 
+}
